@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main">
     <MainStopWatch></MainStopWatch>
   </div>
   <footer class="border border-dark rounded bg-secondary text-light">
@@ -65,19 +65,21 @@ useHead({
   ],
 });
 </script>
-<style scoped>
+<style>
 footer {
   display: flex;
   justify-content: space-evenly;
-  background-color: #f8f9fa;
   padding: 20px 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 a {
   margin: 0 15px;
 }
-@media (min-width: 768px) and (max-width: 991.98px) {
-  footer {
-    display: none;
-  }
+body {
+  position: relative;
+  padding-bottom: 7rem;
+  min-height: 100vh;
 }
 </style>
