@@ -1,50 +1,41 @@
 <template>
   <h1 class="text-center">StopWatch App</h1>
-  <div class="container-input input-group input-group-lg">
-    <span class="input-group-text" id="inputGroup-sizing-lg">Title:</span>
-    <input
-      v-model="titleCronometer"
-      type="text"
-      class="form-control"
-      aria-label="Sizing example input"
-      aria-describedby="inputGroup-sizing-lg"
-    />
-    <button
-      type="button"
-      class="btn btn-outline-success"
-      @click="createdCronometer"
-    >
-      Create
-    </button>
-  </div>
+  <p class="text-center">
+    Control your time, create several stopwatches and be the owner of your times
+    !!
+  </p>
+  <InputStopWatch @createdCronometer="createdCronometer"></InputStopWatch>
+  <p class="text-danger text-center fs-5" v-show="errorMessage">
+    {{ errorMessage }}
+  </p>
   <div class="container text-center">
     <div
       v-for="(cronometer, index) in cronometers"
-      :key="index"
-      :id="index"
+      :key="cronometer"
       :title="cronometer"
-      class="col border border-success p-2 mb-2 border-opacity-75 rounded-4 shadow p-3 mb-5 bg-body-tertiary rounded"
+      :id="index"
     >
-      <p class="fs-3 fw-bolder">{{ cronometer }}</p>
-      <StopWatch @deleteCronometer="deleteCronometer"></StopWatch>
+      <StopWatch
+        :titleCronometers="cronometer"
+        @deleteCronometer="deleteCronometer(index)"
+      ></StopWatch>
     </div>
   </div>
 </template>
 <script setup>
 let cronometers = ref([]);
-const titleCronometer = ref("");
-const createdCronometer = () => {
-  cronometers.value.push(titleCronometer.value);
-  titleCronometer.value = "";
-  save();
-};
-const deleteCronometer = (e) => {
-  for (let i = 0; i < cronometers.value.length; i++) {
-    if (cronometers.value[i] == e.target.parentNode.parentNode.title) {
-      cronometers.value.splice(i, 1);
-    }
-    save();
+const errorMessage = ref(null);
+const createdCronometer = (titleCronometer, e) => {
+  if (titleCronometer.value == "") {
+    errorMessage.value = "Please, add a title";
+  } else {
+    errorMessage.value = null;
+    cronometers.value.push(titleCronometer.value);
+    titleCronometer.value = "";
   }
+};
+const deleteCronometer = (index) => {
+  cronometers.value.splice(index, 1);
 };
 const save = () => {
   localStorage.setItem("cronometers", JSON.stringify(cronometers.value));
@@ -56,6 +47,13 @@ onMounted(() => {
     cronometers.value = JSON.parse(savedCronometer);
   }
 });
+watch(
+  () => cronometers.value,
+  () => {
+    save();
+  },
+  { deep: true }
+);
 </script>
 <style scoped>
 .container-input {

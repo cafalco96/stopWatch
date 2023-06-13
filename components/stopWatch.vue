@@ -1,62 +1,71 @@
 <template>
-  <h2>
-    <span>{{ hour }}H</span> <span>{{ min }}min</span> <span>{{ s }}s</span>
-  </h2>
-  <div class="buttons-container">
-    <button
-      v-show="buttonStatus"
-      class="btn btn-success"
-      @click="startCronometer"
-    >
-      Start
-    </button>
-    <button
-      v-show="!buttonStatus"
-      class="btn btn-outline-info"
-      @click="stopCronometer"
-    >
-      Stop
-    </button>
-    <button class="btn btn-warning" @click="resetCronometer">Reset</button>
-    <button class="btn btn-danger" @click="deleteCronometer">Delete</button>
+  <div
+    class="col border border-success p-2 mb-2 border-opacity-75 rounded-4 shadow p-3 mb-5 bg-body-tertiary rounded"
+  >
+    <h2 class="fs-3 fw-bolder">{{ titleCronometers }}</h2>
+    <h3>
+      <span>{{ hour }}H</span> <span>{{ min }}min</span> <span>{{ seg }}s</span>
+    </h3>
+    <div class="buttons-container">
+      <button
+        v-show="isStartButtonActive"
+        class="btn btn-success"
+        @click="startCronometer"
+      >
+        Start
+      </button>
+      <button
+        v-show="!isStartButtonActive"
+        class="btn btn-outline-info"
+        @click="stopCronometer"
+      >
+        Stop
+      </button>
+      <button class="btn btn-warning" @click="resetCronometer">Reset</button>
+      <button class="btn btn-danger" @click="deleteCronometer">Delete</button>
+    </div>
   </div>
 </template>
 <script setup>
-let s = ref(0);
-let min = ref(0);
-let hour = ref(0);
+const props = defineProps({
+  titleCronometers: {
+    type: String,
+    required: true,
+  },
+});
+const time = ref(0);
+const seg = computed(() => {
+  return time.value % 60;
+});
+const min = computed(() => {
+  return Math.floor(time.value / 60);
+});
+const hour = computed(() => {
+  return Math.floor(time.value / 3600);
+});
 let cronometer = null;
-let buttonStatus = ref(true);
+let isStartButtonActive = ref(true);
 const startCronometer = () => {
-  buttonStatus.value = false;
+  isStartButtonActive.value = false;
   cronometer = setInterval(() => {
-    s.value++;
-    if (s.value === 60) {
-      s.value = 0;
-      min.value++;
-    }
-    if (min.value === 60) {
-      min.value = 0;
-      hour.value++;
-    }
+    time.value++;
   }, 1000);
 };
+
 const resetCronometer = () => {
-  buttonStatus.value = true;
+  isStartButtonActive.value = true;
   clearInterval(cronometer);
-  s.value = 0;
-  min.value = 0;
-  hour.value = 0;
+  time.value = 0;
 };
 const stopCronometer = () => {
   if (cronometer !== null) {
     clearInterval(cronometer);
-    buttonStatus.value = true;
+    isStartButtonActive.value = true;
   }
 };
 const emit = defineEmits(["deleteCronometer"]);
-const deleteCronometer = (e) => {
-  emit("deleteCronometer", e);
+const deleteCronometer = () => {
+  emit("deleteCronometer", props.index);
 };
 </script>
 <style scoped>
