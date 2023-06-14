@@ -38,7 +38,7 @@ const seg = computed(() => {
   return time.value % 60;
 });
 const min = computed(() => {
-  return Math.floor(time.value / 60);
+  return Math.floor(time.value / 60) % 60;
 });
 const hour = computed(() => {
   return Math.floor(time.value / 3600);
