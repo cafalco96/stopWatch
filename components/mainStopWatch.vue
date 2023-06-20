@@ -5,15 +5,12 @@
     !!
   </p>
   <InputStopWatch @createdCronometer="createdCronometer"></InputStopWatch>
-  <p class="text-danger text-center fs-5" v-show="errorMessage">
-    {{ errorMessage }}
-  </p>
   <div class="container text-center">
     <div
       v-for="(cronometer, index) in cronometers"
-      :key="cronometer"
-      :title="cronometer"
-      :id="index"
+      :key="cronometer.id"
+      :title="cronometer.title"
+      :id="cronometer.id"
     >
       <StopWatch
         :titleCronometers="cronometer"
@@ -23,16 +20,11 @@
   </div>
 </template>
 <script setup>
-let cronometers = ref([]);
-const errorMessage = ref(null);
-const createdCronometer = (titleCronometer, e) => {
-  if (titleCronometer.value == "") {
-    errorMessage.value = "Please, add a title";
-  } else {
-    errorMessage.value = null;
-    cronometers.value.push(titleCronometer.value);
-    titleCronometer.value = "";
-  }
+import { v4 as uuidv4 } from "uuid";
+const cronometers = ref([]);
+const createdCronometer = (titleCronometer) => {
+  cronometers.value.push({ title: titleCronometer.value, id: uuidv4() });
+  titleCronometer.value = "";
 };
 const deleteCronometer = (index) => {
   cronometers.value.splice(index, 1);

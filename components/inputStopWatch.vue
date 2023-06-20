@@ -17,11 +17,20 @@
       Create
     </button>
   </div>
+  <p class="text-danger text-center fs-5" v-show="errorMessage">
+    {{ errorMessage }}
+  </p>
 </template>
 <script setup>
 const titleCronometer = ref("");
+const errorMessage = ref(null);
 const emit = defineEmits(["createdCronometer"]);
 const createdCronometer = (e) => {
-  emit("createdCronometer", titleCronometer, e);
+  if (titleCronometer.value == "") {
+    errorMessage.value = "Please, add a title";
+  } else {
+    errorMessage.value = null;
+    emit("createdCronometer", titleCronometer);
+  }
 };
 </script>
