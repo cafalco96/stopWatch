@@ -34,3 +34,11 @@ const createdCronometer = (e) => {
   }
 };
 </script>
+
+<style>
+.container-input {
+  max-width: 768px;
+  margin-right: auto;
+  margin-left: auto;
+}
+</style>
